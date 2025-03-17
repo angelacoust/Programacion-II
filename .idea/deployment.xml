@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="10.11.28.50" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="10.11.28.50">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/FIC_BOX/PRO2/P1" local="$PROJECT_DIR$" web="/" />
+            <mapping local="" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
