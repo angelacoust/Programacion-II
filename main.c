@@ -92,13 +92,13 @@ void delete(tList *L, tConsoleId consoleId){
 
             deleteAtPosition(i, L);
 
-            printf("* Delete: console %s seller %s brand %s price %f bids %d\n", deletedConsole.consoleId, deletedConsole.seller,
+            printf("* Delete: console %s seller %s brand %s price %.2f bids %d\n", deletedConsole.consoleId, deletedConsole.seller,
                    enumToString(deletedConsole.consoleBrand), deletedConsole.consolePrice, deletedConsole.bidCounter);
         }
     }
 }
 
-void bid(tList *L, tConsoleId consoleId, const tUserId bidder, tConsolePrice consolePrice){ //me manda poner const para evitar warnings, por qu e?
+void bid(tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consolePrice){ //me manda poner const para evitar warnings, por qu e?
     /*
      * Objetivo: Modificar el precio de una determinada consola tras una puja
      * Entrada: La lista, el identificador de la consola, el pujaor y el precio de la consola
@@ -107,34 +107,35 @@ void bid(tList *L, tConsoleId consoleId, const tUserId bidder, tConsolePrice con
      * Precondición: La lista está inicializada
      */
 
-    if(isEmptyList(*L)) // Si la lista está vacía
-        printf ("+ Error: Bid not possible\n");
+    if(isEmptyList(*L)) {// Si la lista está vacía
+        printf("+ Error: Bid not possible\n");
+        return;
+    }
     else {
-        tPosL i;
         tItemL console;
-        i = findItem(consoleId, *L);
-        if (i == LNULL) //Si la consola no existiese en la lista
-            printf ("+ Error: Bid not possible\n");
-        else {
+        tPosL i = findItem(consoleId, *L);
+
+        if (i == LNULL) { //Si la consola no existiese en la lista
+            printf("+ Error: Bid not possible\n");
+            return;
+        }else {
             console = getItem(i, *L);
-            if(console.seller == bidder) //Si el vendedor es el mismo que el pujador
-                printf ("+ Error: Bid not possible\n");
-            else {
-                if(consolePrice <= console.consolePrice) // El enunciado pone menor, pero si es igual tampoco tiene sentido actualizarlo
-                    printf ("+ Error: Bid not possible\n");
-                else{
-                    console.bidCounter++;
-                    console.consolePrice = consolePrice;
-                    updateItem(console, i, L);
-                    printf("* Bid: console %s seller %s brand %s price %.2f bids %d\n", console.consoleId, console.seller,
-                           enumToString(console.consoleBrand),console.consolePrice, console.bidCounter);
-                }
+            if ((strcmp(console.seller, bidder) == 0) ||
+                (consolePrice <= console.consolePrice)){ //Si el vendedor es el mismo que el pujador
+                printf("+ Error: Bid not possible\n");
+                return;
+            }else {
+                console.consolePrice = consolePrice;
+                console.bidCounter++;
+                updateItem(console, i, L);
+                printf("* Bid: console %s seller %s brand %s price %.2f bids %d\n", console.consoleId, console.seller,
+                       enumToString(console.consoleBrand),console.consolePrice, console.bidCounter);
             }
         }
     }
 }
 
-void stats(tList *L){
+void stats(tList L){
 
     /*
     * Objetivo: mostrar un listado de consolas actuales y sus datos
@@ -144,15 +145,15 @@ void stats(tList *L){
     */
 
 
-    if (isEmptyList(*L))
+    if (isEmptyList(L))
         printf("+ Error: Stats not possible\n");
     else{
         tPosL i;
         tItemL console; //Consola auxiliar que nos servirá para poder imprimir la información de todas las de la lista
         int cNintendo = 0, cSega = 0;
         float cNintendoPrice = 0, cSegaPrice = 0, averageNintendo, averageSega ;
-        for (i = first(*L); i != LNULL; i = next(i, *L)){
-            console = getItem(i, *L); //Usamos el getItem para obtener la información de cada consola que hay en la lista
+        for (i = first(L); i != LNULL; i = next(i, L)){
+            console = getItem(i, L); //Usamos el getItem para obtener la información de cada consola que hay en la lista
             printf("Console %s seller %s brand %s price %.2f bids %d\n", console.consoleId, console.seller,
                    enumToString(console.consoleBrand), console.consolePrice, console.bidCounter); //Imprimimos los datos de cada una de las consolas
 
@@ -175,7 +176,7 @@ void stats(tList *L){
 
         printf("\nBrand     Consoles    Price  Average\n"
                "Nintendo  %8d %8.2f %8.2f\n"
-               "Sega      %8d %8.2f %8.2f\n", cNintendo, cNintendoPrice, averageNintendo, cSega, cSegaPrice, averageSega);
+               "Sega      %8d %8.2f %8.2f\n", cNintendo,cNintendoPrice,averageNintendo, cSega,cSegaPrice,averageSega);
     }
 }
 
@@ -183,7 +184,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
     printf("********************\n");
     switch (command) {
         case 'N':
-            printf("%s %c: console %s seller %s brand %s price %.2f\n", commandNumber, command, param1, param2, param3, atof(param4));
+            printf("%s %c: console %s seller %s brand %s price %.2f\n", commandNumber,command,param1,param2,param3,atof(param4));
             new(L, param1,param2, stringToEnum(param3), atof(param4));
             break;
         case 'D':
@@ -196,7 +197,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
             break;
         case 'S':
             printf("%s %c\n", commandNumber, command);
-            stats(L);
+            stats(*L);
             break;
         default:
             //Damos por hecho que no se va a pasar una letra diferente
@@ -234,7 +235,7 @@ void readTasks(char *filename, tList *L) {
 
 int main(int nargs, char **args) {
 
-    char *file_name = "new.txt";
+    char *file_name = "bid.txt";
 
     tList L;
     createEmptyList(&L); //creo lalista

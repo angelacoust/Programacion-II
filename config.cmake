@@ -3,4 +3,4 @@
 set(impl STATIC)
 
 #Choose the input file for main (new.txt, delete.txt, bid.txt ...)
-set(input new.txt)
+set(input bid.txt)
