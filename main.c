@@ -192,8 +192,8 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
             delete(L, param1);
             break;
         case 'B':
-            printf("%s %c: console %s bidder %s price %.2f\n", commandNumber, command, param1, param2, atof(param4));
-            bid(L, param1, param2, atof(param4));
+            printf("%s %c: console %s bidder %s price %.2f\n", commandNumber, command, param1, param2, atof(param3));
+            bid(L, param1, param2, atof(param3));
             break;
         case 'S':
             printf("%s %c\n", commandNumber, command);
