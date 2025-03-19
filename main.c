@@ -135,6 +135,8 @@ void bid(tList *L, tConsoleId consoleId, const tUserId bidder, tConsolePrice con
 }
 
 void stats(tList *L){
+
+
     /*
      * Objetivo: mostrar un listado de consolas actuales y sus datos
      * Entrada: La lista de consolas
@@ -152,15 +154,15 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
             new(L, param1,param2, stringToEnum(param3), atof(param4));
             break;
         case 'D':
-            printf("\n");
+            printf("%s %c: console %s\n", commandNumber, command, param1);
             delete(L, param1);
             break;
         case 'B':
-            printf("\n");
+            printf("%s %c: console %s bidder %s price %.2f\n", commandNumber, command, param1, param2, atof(param4));
             bid(L, param1, param2, atof(param4));
             break;
         case 'S':
-            printf("\n");
+            printf("%s %c:\n", commandNumber, command);
             stats(L);
             break;
         default:
