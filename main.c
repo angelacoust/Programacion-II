@@ -136,7 +136,19 @@ void bid(tList *L, tConsoleId consoleId, const tUserId bidder, tConsolePrice con
 
 void stats(tList *L){
 
+    if (isEmptyList(*L))
+        printf("+ Error: Stats not possible\n");
+    else{
+        tPosL i;
+        tItemL console; //Consola auxiliar que nos servirá para poder imprimir la información de todas las de la lista
+        int cNintendo = 0, cSega = 0;
+        for (i = first(*L); i != LNULL; i = next(i, *L)){
+            console = getItem(i, *L); //Usamos el getItem para obtener la información de cada consola que hay en la lista
+            printf("Console %s seller %s brand %s price %.2f bids %d", console.consoleId, console.seller,
+                   enumToString(console.consoleBrand), console.consolePrice, console.bidCounter); //Imprimimos los datos de cada una de las consolas
+        }
 
+    }
     /*
      * Objetivo: mostrar un listado de consolas actuales y sus datos
      * Entrada: La lista de consolas
