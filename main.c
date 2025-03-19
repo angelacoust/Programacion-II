@@ -57,7 +57,7 @@ void new(tList *L, tConsoleId consoleId, tUserId seller, tConsoleBrand brand, tC
        newConsole.bidCounter = 0;
 
        if(insertItem(newConsole, LNULL, L)) //Si se puede insertar
-           printf("* New: console %s seller %s brand %s price %f\n",consoleId,seller, enumToString(brand),consolePrice);
+           printf("* New: console %s seller %s brand %s price %.2f\n",consoleId,seller, enumToString(brand),consolePrice);
        else
            printf("+ Error: New not possible\n");
    }else
@@ -126,7 +126,7 @@ void bid(tList *L, tConsoleId consoleId, const tUserId bidder, tConsolePrice con
                     console.bidCounter++;
                     console.consolePrice = consolePrice;
                     updateItem(console, i, L);
-                    printf("* Bid: console %s seller %s brand %s price %.2f bids %d", console.consoleId, console.seller,
+                    printf("* Bid: console %s seller %s brand %s price %.2f bids %d\n", console.consoleId, console.seller,
                            enumToString(console.consoleBrand),console.consolePrice, console.bidCounter);
                 }
             }
@@ -136,33 +136,54 @@ void bid(tList *L, tConsoleId consoleId, const tUserId bidder, tConsolePrice con
 
 void stats(tList *L){
 
+    /*
+    * Objetivo: mostrar un listado de consolas actuales y sus datos
+    * Entrada: La lista de consolas
+    * Salida: La lista de las consolas con sus datos, y error si la lista está vacía
+    * Precondición: La lista está inicializada
+    */
+
+
     if (isEmptyList(*L))
         printf("+ Error: Stats not possible\n");
     else{
         tPosL i;
         tItemL console; //Consola auxiliar que nos servirá para poder imprimir la información de todas las de la lista
         int cNintendo = 0, cSega = 0;
+        float cNintendoPrice = 0, cSegaPrice = 0, averageNintendo, averageSega ;
         for (i = first(*L); i != LNULL; i = next(i, *L)){
             console = getItem(i, *L); //Usamos el getItem para obtener la información de cada consola que hay en la lista
-            printf("Console %s seller %s brand %s price %.2f bids %d", console.consoleId, console.seller,
+            printf("Console %s seller %s brand %s price %.2f bids %d\n", console.consoleId, console.seller,
                    enumToString(console.consoleBrand), console.consolePrice, console.bidCounter); //Imprimimos los datos de cada una de las consolas
+
+            if(strcmp(enumToString(console.consoleBrand), "nintendo") == 0){
+                cNintendo ++; //Vamos contando el número de consolas
+                cNintendoPrice += console.consolePrice;
+            }else{
+                cSega ++;
+                cSegaPrice += console.consolePrice;
+            }
         }
+        if (cNintendoPrice == 0) //Para evitar una división entre 0, que da indeterminado
+            averageNintendo = 0;
+        else
+            averageNintendo = cNintendoPrice / (float) cNintendo;
+        if (cSega == 0)
+            averageSega = 0;
+        else
+            averageSega = cSegaPrice / (float) cSega;
 
+        printf("\nBrand     Consoles    Price  Average\n"
+               "Nintendo  %8d %8.2f %8.2f\n"
+               "Sega      %8d %8.2f %8.2f\n", cNintendo, cNintendoPrice, averageNintendo, cSega, cSegaPrice, averageSega);
     }
-    /*
-     * Objetivo: mostrar un listado de consolas actuales y sus datos
-     * Entrada: La lista de consolas
-     * Salida: La lista de las consolas con sus datos, y error si la lista está vacía
-     * Precondición: La lista está inicializada
-     */
 }
-
 
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *L) {
     printf("********************\n");
     switch (command) {
         case 'N':
-            printf("%s %c: console %s seller %s brand %s price %.2f\n", commandNumber, command, param1, param2);
+            printf("%s %c: console %s seller %s brand %s price %.2f\n", commandNumber, command, param1, param2, param3, atof(param4));
             new(L, param1,param2, stringToEnum(param3), atof(param4));
             break;
         case 'D':
@@ -174,7 +195,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
             bid(L, param1, param2, atof(param4));
             break;
         case 'S':
-            printf("%s %c:\n", commandNumber, command);
+            printf("%s %c\n", commandNumber, command);
             stats(L);
             break;
         default:

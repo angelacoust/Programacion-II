@@ -100,5 +100,5 @@ void updateItem(tItemL d, tPosL p, tList *L){
 tPosL findItem(tConsoleId d, tList L){
     tPosL p;
     for (p = L; (p != LNULL) && strcmp(p->data.consoleId, d) != 0; p=p->next); //Se para o en NULL, pq llegó al final, o cuando encuentra el mismo consoleId
-        return p;
+    return p;
 }
