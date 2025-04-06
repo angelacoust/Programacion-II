@@ -96,7 +96,7 @@ tItemL getItem(tPosL p, tList L);
 /*
  * Objetivo: Conocer el contenido del elemento de la posición dada
  * Entradas: La lista y una posición da la misma
- * Salidas:
+ * Salidas: Devuelve el contenido del elemento de dicha posición
  * Precondición: La lista está inicializada, no vacía y la posición dada es válida
  */
 

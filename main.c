@@ -34,7 +34,6 @@ tConsoleBrand stringToEnum (char * brand){ //f auxiliar para pasar la marca por 
         return nintendo;
     else
         return sega;
-
 }
 
 void new(tList *L, tConsoleId consoleId, tUserId seller, tConsoleBrand brand, tConsolePrice consolePrice){
