@@ -1,4 +1,0 @@
-/Users/angelacosta/Documents/1ºInformatica/PRO II/pro2_2025/p1/P1/cmake-build-debug/CMakeFiles/main.dir
-/Users/angelacosta/Documents/1ºInformatica/PRO II/pro2_2025/p1/P1/cmake-build-debug/CMakeFiles/test_lists.dir
-/Users/angelacosta/Documents/1ºInformatica/PRO II/pro2_2025/p1/P1/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/angelacosta/Documents/1ºInformatica/PRO II/pro2_2025/p1/P1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
