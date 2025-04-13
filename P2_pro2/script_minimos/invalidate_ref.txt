@@ -1,0 +1,94 @@
+********************
+01 N: console console1 seller user1 brand sega price 150.00
+* New: console console1 seller user1 brand sega price 150.00
+********************
+02 N: console console2 seller user1 brand sega price 120.00
+* New: console console2 seller user1 brand sega price 120.00
+********************
+03 N: console console3 seller user2 brand nintendo price 20.00
+* New: console console3 seller user2 brand nintendo price 20.00
+********************
+04 N: console console4 seller user2 brand nintendo price 39.50
+* New: console console4 seller user2 brand nintendo price 39.50
+********************
+05 S
+Console console1 seller user1 brand sega price 150.00. No bids
+Console console2 seller user1 brand sega price 120.00. No bids
+Console console3 seller user2 brand nintendo price 20.00. No bids
+Console console4 seller user2 brand nintendo price 39.50. No bids
+
+Brand     Consoles    Price  Average
+Nintendo         2    59.50    29.75
+Sega             2   270.00   135.00
+Top bid not possible
+********************
+06 B: console console1 bidder user3 price 151.00
+* Bid: console console1 bidder user3 brand sega price 151.00 bids 1
+********************
+07 B: console console1 bidder user4 price 152.00
+* Bid: console console1 bidder user4 brand sega price 152.00 bids 2
+********************
+08 B: console console1 bidder user3 price 153.00
+* Bid: console console1 bidder user3 brand sega price 153.00 bids 3
+********************
+09 B: console console1 bidder user4 price 154.00
+* Bid: console console1 bidder user4 brand sega price 154.00 bids 4
+********************
+10 B: console console1 bidder user3 price 155.00
+* Bid: console console1 bidder user3 brand sega price 155.00 bids 5
+********************
+11 B: console console1 bidder user4 price 156.00
+* Bid: console console1 bidder user4 brand sega price 156.00 bids 6
+********************
+12 S
+Console console1 seller user1 brand sega price 150.00 bids 6 top bidder user4
+Console console2 seller user1 brand sega price 120.00. No bids
+Console console3 seller user2 brand nintendo price 20.00. No bids
+Console console4 seller user2 brand nintendo price 39.50. No bids
+
+Brand     Consoles    Price  Average
+Nintendo         2    59.50    29.75
+Sega             2   270.00   135.00
+Top bid: console console1 seller user1 brand sega price 150.00 bidder user4 top price 156.00 increase 4.00%
+********************
+13 B: console console2 bidder user2 price 125.00
+* Bid: console console2 bidder user2 brand sega price 125.00 bids 1
+********************
+14 S
+Console console1 seller user1 brand sega price 150.00 bids 6 top bidder user4
+Console console2 seller user1 brand sega price 120.00 bids 1 top bidder user2
+Console console3 seller user2 brand nintendo price 20.00. No bids
+Console console4 seller user2 brand nintendo price 39.50. No bids
+
+Brand     Consoles    Price  Average
+Nintendo         2    59.50    29.75
+Sega             2   270.00   135.00
+Top bid: console console2 seller user1 brand sega price 120.00 bidder user2 top price 125.00 increase 4.17%
+********************
+15 B: console console3 bidder user1 price 25.00
+* Bid: console console3 bidder user1 brand nintendo price 25.00 bids 1
+********************
+16 S
+Console console1 seller user1 brand sega price 150.00 bids 6 top bidder user4
+Console console2 seller user1 brand sega price 120.00 bids 1 top bidder user2
+Console console3 seller user2 brand nintendo price 20.00 bids 1 top bidder user1
+Console console4 seller user2 brand nintendo price 39.50. No bids
+
+Brand     Consoles    Price  Average
+Nintendo         2    59.50    29.75
+Sega             2   270.00   135.00
+Top bid: console console3 seller user2 brand nintendo price 20.00 bidder user1 top price 25.00 increase 25.00%
+********************
+17 I
+* InvalidateBids: console console1 seller user1 brand sega price 150.00 bids 6 average bids 2.00
+********************
+18 S
+Console console1 seller user1 brand sega price 150.00. No bids
+Console console2 seller user1 brand sega price 120.00 bids 1 top bidder user2
+Console console3 seller user2 brand nintendo price 20.00 bids 1 top bidder user1
+Console console4 seller user2 brand nintendo price 39.50. No bids
+
+Brand     Consoles    Price  Average
+Nintendo         2    59.50    29.75
+Sega             2   270.00   135.00
+Top bid: console console3 seller user2 brand nintendo price 20.00 bidder user1 top price 25.00 increase 25.00%

@@ -1,0 +1,18 @@
+01 N console1 user1 sega 150.00
+02 N console2 user1 sega 120.00
+03 N console3 user2 nintendo 20.00
+04 N console4 user2 nintendo 39.50
+05 S
+06 B console1 user3 151.00
+07 B console1 user4 152.00
+08 B console1 user3 153.00
+09 B console1 user4 154.00
+10 B console1 user3 155.00
+11 B console1 user4 156.00
+12 S
+13 B console2 user2 125.00
+14 S
+15 B console3 user1 25.00
+16 S
+17 I
+18 S
