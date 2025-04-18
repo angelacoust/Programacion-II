@@ -30,7 +30,7 @@ tConsoleBrand stringToEnum (char * brand){ //f auxiliar para pasar la marca por 
         return sega;
 }
 
-void new (tList *L, tConsoleId consoleId, tUserId userId, tConsoleBrand consoleBrand, tConsolePrice consolePrice){
+void new (tList *L, tConsoleId consoleId, tUserId seller, tConsoleBrand consoleBrand, tConsolePrice consolePrice){
     /*
      * Objetivo: Dar de alta una nueva consola en la lista
      * Entrada: La lista, el identificador de la consola, el id de usuario, la marca de la consola y el precio
@@ -39,6 +39,25 @@ void new (tList *L, tConsoleId consoleId, tUserId userId, tConsoleBrand consoleB
      * PreCD: La lista a insertar debe estar inicializada
      */
 
+    if(findItem(consoleId, *L) != LNULL) //Comprobamos que no existe ya la consola en la lista
+        printf("+ Error: New not possible\n");
+
+    else {
+        tItemL newConsole; //Creamos una nueva consola auxiliar
+
+        strcpy(newConsole.consoleId, consoleId); //Copiamos los datos de la consola en la auxiliar
+        strcpy(newConsole.seller, seller);
+        newConsole.consoleBrand = consoleBrand;
+        newConsole.consolePrice = consolePrice;
+        newConsole.bidCounter = 0;
+        createEmptyStack(&newConsole.bidStack);
+
+        if(insertItem(newConsole, L)) //Si se puede insertar, insertamos e imprimimos mensaje de éxito
+            printf("* New: console %s seller %s brand %s price %.2f\n",consoleId,seller, enumToString(consoleBrand),consolePrice);
+
+        else
+            printf("+ Error: New not possible\n"); //Si no se ha podido realizar la inserción
+    }
 }
 
 void delete (tList *L, tConsoleId consoleId){
@@ -102,9 +121,10 @@ void stats(tList L){
 }
 
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *L) {
-
+    printf("********************\n");
     switch (command) {
         case 'N': //NEW: Dar de alta una nueva consola
+            printf("%s %c: console %s seller %s brand %s price %.2f\n", commandNumber,command,param1,param2,param3,atof(param4));
             new(L, param1, param2, stringToEnum(param3), atof(param4));
             break;
         case 'D': //DELETE: Dar de baja una consola
