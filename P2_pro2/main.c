@@ -137,7 +137,7 @@ void bid (tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consoleP
                     console.bidCounter++; //Aumentamos el número de veces que se ha pujado
                     updateItem(console, i, L); //Actualizamos los datos de la consola e imprimimos mensaje de exito
                     printf("* Bid: console %s seller %s brand %s price %.2f bids %d\n",console.consoleId,console.seller,
-                           enumToString(console.consoleBrand), console.consolePrice, console.bidCounter);
+                           enumToString(console.consoleBrand), consolePrice, console.bidCounter);
 
                 }
             }
@@ -251,7 +251,7 @@ void readTasks(char *filename, tList *L) {
 
 int main(int nargs, char **args) {
 
-    char *file_name = "delete.txt";
+    char *file_name = "bid.txt";
 
     tList L;
     createEmptyList(&L);
