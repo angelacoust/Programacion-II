@@ -50,7 +50,7 @@ void new (tList *L, tConsoleId consoleId, tUserId seller, tConsoleBrand consoleB
         newConsole.consoleBrand = consoleBrand;
         newConsole.consolePrice = consolePrice;
         newConsole.bidCounter = 0;
-        createEmptyStack(&newConsole.bidStack);
+        createEmptyStack(&newConsole.bidStack); //Creamos la pila de pujas que recibira la consola
 
         if(insertItem(newConsole, L)) //Si se puede insertar, insertamos e imprimimos mensaje de éxito
             printf("* New: console %s seller %s brand %s price %.2f\n",consoleId,seller, enumToString(consoleBrand),consolePrice);
@@ -68,6 +68,33 @@ void delete (tList *L, tConsoleId consoleId){
      *         la consola eliminada.
      * PreCD: La lista está inicializada
      */
+
+    if(isEmptyList(*L))
+        printf("+ Error: Delete not possible\n"); //Si la lista está vacía no hay nada que borrar
+
+    else {
+        tPosL p;
+        p = findItem(consoleId, *L);
+
+        if (p == LNULL)
+            printf("+ Error: Delete not possible\n"); // Si no se encontró el elemento (no está en la lista), da error
+
+        else {
+            tItemL console;
+            console = getItem(p, *L);
+            console.bidCounter = 0;
+
+            if(!isEmptyStack(console.bidStack)) { //Si no está vacía la lista de pujas, vamos a vaciarla :)
+                while (!isEmptyStack(console.bidStack)) {
+                    pop(&console.bidStack);
+                    console.bidCounter++;
+                }
+            }
+            deleteAtPosition(p, L);
+            printf("* Delete: console %s seller %s brand %s price %.2f bids %d\n", console.consoleId,
+                   console.seller, enumToString(console.consoleBrand), console.consolePrice, console.bidCounter);
+        }
+    }
 }
 
 void bid (tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consolePrice){
@@ -128,6 +155,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
             new(L, param1, param2, stringToEnum(param3), atof(param4));
             break;
         case 'D': //DELETE: Dar de baja una consola
+            printf("%s %c: console %s\n", commandNumber, command, param1);
             delete(L, param1);
             break;
         case 'B'://BID: Puja por una determinada consola
@@ -184,7 +212,7 @@ void readTasks(char *filename, tList *L) {
 
 int main(int nargs, char **args) {
 
-    char *file_name = "new.txt";
+    char *file_name = "delete.txt";
 
     tList L;
     createEmptyList(&L);
