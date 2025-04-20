@@ -105,6 +105,44 @@ void bid (tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consoleP
      * PreCD:
      * PostCD:
      */
+
+    if(isEmptyList(*L)) // Si la lista está vacía
+        printf("+ Error: Bid not possible\n");
+
+    else {
+        tItemL console; //Creamos variable auxiliar
+        //float price = consolePrice;
+        tPosL i = findItem(consoleId, *L); //Buscamos la posición de la consola en la lista
+
+        if (i == LNULL)  //Si la consola no existiese en la lista da error
+            printf("+ Error: Bid not possible\n");
+
+        else {
+            console = getItem(i, *L); //Buscamos la consola en la lista
+            // Si pujador = vendedor o si el precio de la puja es superior al precio del producto o al de la puja anterior
+            if ((strcmp(console.seller,bidder) == 0) ||
+               (consolePrice <=console.consolePrice) || (consolePrice <= peek(console.bidStack).consolePrice))
+                printf("+ Error: Bid not possible\n");
+
+            else {
+                tItemS bid;
+                strcpy(bid.bidder, bidder);
+                bid.consolePrice = consolePrice;
+
+                //Si no se puede insertar en la pila de pujas
+                if (!push(bid, &console.bidStack))
+                    printf("+ Error: Bid not possible\n");
+
+                else {
+                    console.bidCounter++; //Aumentamos el número de veces que se ha pujado
+                    updateItem(console, i, L); //Actualizamos los datos de la consola e imprimimos mensaje de exito
+                    printf("* Bid: console %s seller %s brand %s price %.2f bids %d\n",console.consoleId,console.seller,
+                           enumToString(console.consoleBrand), console.consolePrice, console.bidCounter);
+
+                }
+            }
+        }
+    }
 }
 
 void award(tList L, tConsoleId consoleId){
@@ -159,6 +197,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
             delete(L, param1);
             break;
         case 'B'://BID: Puja por una determinada consola
+            printf("%s %c: console %s bidder %s price %.2f\n", commandNumber, command, param1, param2, atof(param3));
             bid(L, param1, param2, atof(param3));
             break;
         case 'A': //AWARD: Asignamos el ganador de la puja de una consola
