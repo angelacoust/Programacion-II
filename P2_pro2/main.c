@@ -30,13 +30,14 @@ tConsoleBrand stringToEnum (char * brand){ //f auxiliar para pasar la marca por 
         return sega;
 }
 
-void new (tList *L, tConsoleId consoleId, tUserId seller, tConsoleBrand consoleBrand, tConsolePrice consolePrice){
+void New (tList *L, tConsoleId consoleId, tUserId seller, tConsoleBrand consoleBrand, tConsolePrice consolePrice){
     /*
      * Objetivo: Dar de alta una nueva consola en la lista
      * Entrada: La lista, el identificador de la consola, el id de usuario, la marca de la consola y el precio
      * Salida: Si pudo añadir, imprime los datos de la nueva consola. Si ya existe una con los mismos datos o no se ha
      *         podido realizar la inserción, devolverá un mensaje de Error
      * PreCD: La lista a insertar debe estar inicializada
+     * PostCD: El contenido de la lista puede haber cambiado
      */
 
     if(findItem(consoleId, *L) != LNULL) //Comprobamos que no existe ya la consola en la lista
@@ -60,13 +61,14 @@ void new (tList *L, tConsoleId consoleId, tUserId seller, tConsoleBrand consoleB
     }
 }
 
-void delete (tList *L, tConsoleId consoleId){
+void Delete (tList *L, tConsoleId consoleId){
     /*
      * Objetivo: Dar de baja una consola
      * Entrada: La lista en la que buscamos la consola y el identificador de la consola
      * Salida: Error si no se encuentra la consola o si la lista está vacía. Si se encuentra imprime la información de
      *         la consola eliminada.
      * PreCD: La lista está inicializada
+     * PostCD: El contenido de la lista puede haber cambiado
      */
 
     if(isEmptyList(*L))
@@ -97,13 +99,16 @@ void delete (tList *L, tConsoleId consoleId){
     }
 }
 
-void bid (tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consolePrice){
+void Bid (tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consolePrice){
     /*
      * Objetivo: Pujar por una determinada consola modificando así su precio
      * Entradas: La lista de consolas, el identificador de la consola, el
-     * Salidas:
-     * PreCD:
-     * PostCD:
+     * Entrada: La lista, el identificador de la consola, el pujaor y el precio de la consola
+     * Salida: Si no existiese la consola, el vendedor fuese el pujador o si el precio de la puja es inferior al actual
+               o al de la puja anterior, dará error, si no imprimirá la lista con el precio y el contador de pujas
+               actualizados de dicha consola.
+     * PreCD: La lista está inicializada
+     * PostCD: La información de los elementos de la lista puede haber cambiado
      */
 
     if(isEmptyList(*L)) // Si la lista está vacía
@@ -119,9 +124,9 @@ void bid (tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consoleP
 
         else {
             console = getItem(i, *L); //Buscamos la consola en la lista
-            // Si pujador = vendedor o si el precio de la puja es superior al precio del producto o al de la puja anterior
+            //Si pujador = vendedor o si el precio la puja actual es inferior al de la puja anterior o al de la consola
             if ((strcmp(console.seller,bidder) == 0) ||
-               (consolePrice <=console.consolePrice) || (consolePrice <= peek(console.bidStack).consolePrice))
+               (consolePrice<= console.consolePrice) || (consolePrice <= peek(console.bidStack).consolePrice))
                 printf("+ Error: Bid not possible\n");
 
             else {
@@ -135,17 +140,16 @@ void bid (tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consoleP
 
                 else {
                     console.bidCounter++; //Aumentamos el número de veces que se ha pujado
-                    updateItem(console, i, L); //Actualizamos los datos de la consola e imprimimos mensaje de exito
+                    updateItem(console, i, L); //Actualizamos  datos de la consola e imprimimos mensaje de exito
                     printf("* Bid: console %s seller %s brand %s price %.2f bids %d\n",console.consoleId,console.seller,
                            enumToString(console.consoleBrand), consolePrice, console.bidCounter);
-
                 }
             }
         }
     }
 }
 
-void award(tList L, tConsoleId consoleId){
+void Award(tList L, tConsoleId consoleId){
     /*
      * Objetivo:
      * Entradas:
@@ -155,7 +159,7 @@ void award(tList L, tConsoleId consoleId){
      */
 }
 
-void invalidateBids(tList *L){
+void InvalidateBids(tList *L){
     /*
      * Objetivo:
      * Entradas:
@@ -171,18 +175,59 @@ void Remove(tList *L){
      * Entradas:
      * Salidas:
      * PreCD:
-     * PostCD:
+     * PostCD: El contenido de la lista puede haber cambiado
      */
 }
 
-void stats(tList L){
+void Stats(tList L) {
     /*
-     * Objetivo:
-     * Entrada:
-     * Salida:
-     * PrecD:
-     * PostCD:
+     * Objetivo: Mostrar un listado de las consolas actuales y sus respectivos datos
+     * Entrada: La lista
+     * Salida: La lista de las consolas con sus datos, y error si la lista está vacía. Y se mostrará la consola para la
+     *         que el importe de su mejor puja suponga el mayor incremento sobre su precio original o si no existiera
+     *         ninguna puja, un mensaje que informe de ello.
+     * PreCD: La lista está inicializada
      */
+
+    if (isEmptyList(L))
+        printf("+ Error: Stats not possible\n");
+
+    else {
+        tPosL posL;
+        tItemL console; //Consola auxiliar que nos servirá para poder imprimir la información de todas las de la lista
+
+        int cNintendo = 0, cSega = 0;
+        float cNintendoPrice = 0, cSegaPrice = 0, averageNintendo, averageSega ;
+
+        for (posL =first(L); posL != LNULL; posL = next(posL, L)) {
+            console = getItem(posL, L); //Usamos el getItem para obtener la información de cada consola que hay en la lista
+
+            if (console.consoleBrand == nintendo) {
+                cNintendo++; //Vamos contando el número de consolas de la marca nintendo por un lado
+                cNintendoPrice += console.consolePrice; //Tambien almacenamos el precio de todas para calcular luego la media
+            } else {
+                cSega++; //Marca sega
+                cSegaPrice += console.consolePrice; //Para calcular la media
+            }
+
+            if (cNintendoPrice == 0) //Para evitar una división entre 0, que daria indeterminado
+                averageNintendo = 0;
+            else
+                averageNintendo = cNintendoPrice / (float) cNintendo; //Calculamos la media dividiendo el dinero total entre el numero de consolas (Nintendo)
+
+            if (cSega == 0) //Evitar división entre cero
+                averageSega = 0;
+            else
+                averageSega = cSegaPrice / (float) cSega; //Calculamos la media dividiendo el dinero total entre el numero de consolas (Sega)
+
+            printf("Console %s seller %s brand %s price %.2f bids %d\n", console.consoleId, console.seller,
+                   enumToString(console.consoleBrand), console.consolePrice,
+                   console.bidCounter); //Imprimimos los datos de cada una de las consolas
+        }
+        printf("\nBrand     Consoles    Price  Average\n"
+               "Nintendo  %8d %8.2f %8.2f\n"
+               "Sega      %8d %8.2f %8.2f\n", cNintendo,cNintendoPrice,averageNintendo, cSega,cSegaPrice,averageSega);
+    }
 }
 
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *L) {
@@ -190,27 +235,31 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
     switch (command) {
         case 'N': //NEW: Dar de alta una nueva consola
             printf("%s %c: console %s seller %s brand %s price %.2f\n", commandNumber,command,param1,param2,param3,atof(param4));
-            new(L, param1, param2, stringToEnum(param3), atof(param4));
+            New(L, param1, param2, stringToEnum(param3), atof(param4));
             break;
         case 'D': //DELETE: Dar de baja una consola
             printf("%s %c: console %s\n", commandNumber, command, param1);
-            delete(L, param1);
+            Delete(L, param1);
             break;
         case 'B'://BID: Puja por una determinada consola
             printf("%s %c: console %s bidder %s price %.2f\n", commandNumber, command, param1, param2, atof(param3));
-            bid(L, param1, param2, atof(param3));
+            Bid(L, param1, param2, atof(param3));
             break;
         case 'A': //AWARD: Asignamos el ganador de la puja de una consola
-            award(*L, param1);
+            printf("%s %c: console %s\n", commandNumber, command, param1);
+            Award(*L, param1);
             break;
         case 'R': //REMOVE: Elimina las consojas sin pujas
+            printf("%s %c\n", commandNumber, command);
             Remove(L);
             break;
         case 'S': //STATS: Mostrar un listado de consolas y sus datos
-            stats(*L);
+            printf("%s %c\n", commandNumber, command);
+            Stats(*L);
             break;
         case 'I': //INVALIDATEBITS: Se eliminan las pujas de una consola con un número de pujas excesivo
-            invalidateBids(L);
+            printf("%s %c\n", commandNumber, command);
+            InvalidateBids(L);
             break;
         default:
             //Damos por hecho que no se va a introducir una letra diferente
@@ -254,7 +303,7 @@ int main(int nargs, char **args) {
     char *file_name = "bid.txt";
 
     tList L;
-    createEmptyList(&L);
+    createEmptyList(&L); //Creación de la lista
     if (nargs > 1) {
         file_name = args[1];
     } else {
