@@ -203,7 +203,7 @@ void Stats(tList L) {
         tItemL console, maximo; //Consola auxiliar que servirá para poder imprimir la información de todas las de la lista
         tItemS bid, mayorBid;
 
-        int cNintendo = 0, cSega = 0, suma = 0;
+        int cNintendo = 0, cSega = 0, bids = 0;
         float cNintendoPrice = 0, cSegaPrice = 0, averageNintendo, averageSega, aux = 0 ;
 
 
@@ -216,9 +216,9 @@ void Stats(tList L) {
             if(isEmptyStack(console.bidStack)) { // if(console.bidCounter == 0)
                 printf(". No bids\n");
             } else {
-                bid = peek(console.bidStack);
-                printf(" bids %d top bidder %s\n", console.bidCounter, bid.bidder);
-                suma++;
+                bid = peek(console.bidStack); //Accedemos a la última puja de la consola
+                printf(" bids %d top bidder %s\n", console.bidCounter, bid.bidder); //Imprimimos sus datos
+                bids++; //
                 if (((bid.consolePrice) * 100 / console.consolePrice - 100) > aux) {
                     aux = ((bid.consolePrice * 100 / console.consolePrice) - 100);
                     maximo = console;
@@ -249,7 +249,7 @@ void Stats(tList L) {
                "Nintendo  %8d %8.2f %8.2f\n"
                "Sega      %8d %8.2f %8.2f\n", cNintendo,cNintendoPrice,averageNintendo, cSega,cSegaPrice,averageSega);
 
-        if (suma > 0){
+        if (bids > 0){
             printf("Top bid: console %s seller %s brand %s price %.2f bidder %s top price %.2f increase %.2f%%\n",
                    maximo.consoleId, maximo.seller, enumToString(maximo.consoleBrand), maximo.consolePrice,
                    mayorBid.bidder, mayorBid.consolePrice, aux);
