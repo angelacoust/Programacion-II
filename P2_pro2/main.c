@@ -30,6 +30,12 @@ tConsoleBrand stringToEnum (char * brand){ //f auxiliar para pasar la marca por 
         return sega;
 }
 
+float Increment(tItemL console){
+    float difference = peek(console.bidStack).consolePrice - console.consolePrice;
+    return (difference / console.consolePrice) * 100;
+}
+
+
 void New (tList *L, tConsoleId consoleId, tUserId seller, tConsoleBrand consoleBrand, tConsolePrice consolePrice){
     /*
      * Objetivo: Dar de alta una nueva consola en la lista
@@ -194,13 +200,31 @@ void Stats(tList L) {
 
     else {
         tPosL posL;
-        tItemL console; //Consola auxiliar que nos servirá para poder imprimir la información de todas las de la lista
+        tItemL console, maximo; //Consola auxiliar que servirá para poder imprimir la información de todas las de la lista
+        tItemS bid, mayorBid;
 
-        int cNintendo = 0, cSega = 0;
-        float cNintendoPrice = 0, cSegaPrice = 0, averageNintendo, averageSega ;
+        int cNintendo = 0, cSega = 0, suma = 0;
+        float cNintendoPrice = 0, cSegaPrice = 0, averageNintendo, averageSega, aux = 0 ;
+
 
         for (posL =first(L); posL != LNULL; posL = next(posL, L)) {
-            console = getItem(posL, L); //Usamos el getItem para obtener la información de cada consola que hay en la lista
+            console = getItem(posL, L); //Usamos el getItem para obtener la info de cada consola que hay en la lista
+            //Imprimimos los datos de cada una de las consolas
+            printf("Console %s seller %s brand %s price %.2f", console.consoleId, console.seller,
+                   enumToString(console.consoleBrand), console.consolePrice);
+
+            if(isEmptyStack(console.bidStack)) { // if(console.bidCounter == 0)
+                printf(". No bids\n");
+            } else {
+                bid = peek(console.bidStack);
+                printf(" bids %d top bidder %s\n", console.bidCounter, bid.bidder);
+                suma++;
+                if (((bid.consolePrice) * 100 / console.consolePrice - 100) > aux) {
+                    aux = ((bid.consolePrice * 100 / console.consolePrice) - 100);
+                    maximo = console;
+                    mayorBid = bid; //Para guardar el mayor porcentaje
+                }
+            }
 
             if (console.consoleBrand == nintendo) {
                 cNintendo++; //Vamos contando el número de consolas de la marca nintendo por un lado
@@ -219,16 +243,22 @@ void Stats(tList L) {
                 averageSega = 0;
             else
                 averageSega = cSegaPrice / (float) cSega; //Calculamos la media dividiendo el dinero total entre el numero de consolas (Sega)
-
-            printf("Console %s seller %s brand %s price %.2f bids %d\n", console.consoleId, console.seller,
-                   enumToString(console.consoleBrand), console.consolePrice,
-                   console.bidCounter); //Imprimimos los datos de cada una de las consolas
         }
+
         printf("\nBrand     Consoles    Price  Average\n"
                "Nintendo  %8d %8.2f %8.2f\n"
                "Sega      %8d %8.2f %8.2f\n", cNintendo,cNintendoPrice,averageNintendo, cSega,cSegaPrice,averageSega);
+
+        if (suma > 0){
+            printf("Top bid: console %s seller %s brand %s price %.2f bidder %s top price %.2f increase %.2f%%\n",
+                   maximo.consoleId, maximo.seller, enumToString(maximo.consoleBrand), maximo.consolePrice,
+                   mayorBid.bidder, mayorBid.consolePrice, aux);
+        } else {
+            printf("Top bid not possible\n");
+        }
     }
 }
+
 
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *L) {
     printf("********************\n");
