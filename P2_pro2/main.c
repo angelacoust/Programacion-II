@@ -147,7 +147,7 @@ void Bid (tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consoleP
                 else {
                     console.bidCounter++; //Aumentamos el número de veces que se ha pujado
                     updateItem(console, i, L); //Actualizamos  datos de la consola e imprimimos mensaje de exito
-                    printf("* Bid: console %s seller %s brand %s price %.2f bids %d\n",console.consoleId,console.seller,
+                    printf("* Bid: console %s bidder %s brand %s price %.2f bids %d\n",console.consoleId,bid.bidder,
                            enumToString(console.consoleBrand), consolePrice, console.bidCounter);
                 }
             }
