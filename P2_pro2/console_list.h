@@ -128,12 +128,5 @@ tPosL findItem(tConsoleId d, tList L);
  * Precondición: La lista está inicializada
  */
 
-bool createNode(tPosL *p);
-/*
- * Objetivo: Crear un nuevo nodo para meter en una lista
- * Entrada: La posición en la que vamos a crear el nodo
- * Salida: Verdadero si se crea el nodo, falso si no se pudo
- */
-
 
 #endif

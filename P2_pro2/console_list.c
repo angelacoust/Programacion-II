@@ -41,17 +41,21 @@ tPosL previous(tPosL p, tList L){
     }
 }
 
-bool createNode(tPosL *p){ //Funcion auxiliar para el InsertItem
-    *p=malloc(sizeof(**p)); //*p = malloc(sizeof(struct tNode));
-    return *p != LNULL;
+
+//FUNCIONES AUXILIARES PARA EL INSERTITEM: createNode y findPosition
+
+bool createNode(tPosL *p){ //Funcion auxiliar
+    *p=malloc(sizeof(**p)); // Reserva en un puntero una direccion de memoria de tamaño suficiente para un tNode
+    return *p != LNULL; //Si se puede reservar memoria, devuelve Verdadero, si no devuelve falso
 }
 
-tPosL findPosition(tList L, tItemL d){ //Funcion auxiliar para el insertItem
+tPosL findPosition(tList L, tItemL d){ //Funcion auxiliar
     tPosL p;
-
+    //Recorremos la lista buscando el tItem
     for (p = L; ((p->next !=  LNULL) && strcmp(p->next->data.consoleId, d.consoleId) < 0); p = p->next);
-    return p;
+    return p; //Devolvemos la posición del tItem buscado
 }
+
 
 bool insertItem(tItemL d, tList *L){ //Pasamos la lista por referencia porq la vamos a modificar
     tPosL p,q;

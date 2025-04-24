@@ -30,12 +30,6 @@ tConsoleBrand stringToEnum (char * brand){ //f auxiliar para pasar la marca por 
         return sega;
 }
 
-float Increment(tItemL console){
-    float difference = peek(console.bidStack).consolePrice - console.consolePrice;
-    return (difference / console.consolePrice) * 100;
-}
-
-
 void New (tList *L, tConsoleId consoleId, tUserId seller, tConsoleBrand consoleBrand, tConsolePrice consolePrice){
     /*
      * Objetivo: Dar de alta una nueva consola en la lista
@@ -117,12 +111,13 @@ void Bid (tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consoleP
      * PostCD: La información de los elementos de la lista puede haber cambiado
      */
 
-    if(isEmptyList(*L)) // Si la lista está vacía
-        printf("+ Error: Bid not possible\n");
 
-    else {
+    //Creo que debería borrar el isEmptyList pq con el findItem ya compruebo q la lista no este vacía y sería comprobarlo dos veces
+    //if(isEmptyList(*L)) // Si la lista está vacía
+      //  printf("+ Error: Bid not possible\n");
+
+    // else {
         tItemL console; //Creamos variable auxiliar
-        //float price = consolePrice;
         tPosL i = findItem(consoleId, *L); //Buscamos la posición de la consola en la lista
 
         if (i == LNULL)  //Si la consola no existiese en la lista da error
@@ -131,8 +126,8 @@ void Bid (tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consoleP
         else {
             console = getItem(i, *L); //Buscamos la consola en la lista
             //Si pujador = vendedor o si el precio la puja actual es inferior al de la puja anterior o al de la consola
-            if ((strcmp(console.seller,bidder) == 0) ||
-               (consolePrice<= console.consolePrice) || (consolePrice <= peek(console.bidStack).consolePrice))
+            if ((strcmp(console.seller, bidder) == 0) ||
+               (consolePrice <= console.consolePrice) || (consolePrice <= peek(console.bidStack).consolePrice))
                 printf("+ Error: Bid not possible\n");
 
             else {
@@ -152,13 +147,13 @@ void Bid (tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consoleP
                 }
             }
         }
-    }
+    //}
 }
 
 void Award(tList L, tConsoleId consoleId){
     /*
-     * Objetivo:
-     * Entradas:
+     * Objetivo: Asignar el ganador de la puja de una consola
+     * Entradas: La lista y el identificador de la consola ganadora
      * Salidas:
      * PreCD:
      * PostCD:
@@ -258,7 +253,12 @@ void Stats(tList L) {
         }
     }
 }
-
+/*
+ * Extraccion respecto a la implementacion dinmámica y estática
+ * Hay que implementar como tipo de dato abstracto, no asumir y usar las funciiones hechas
+ * Coger programa principal y buscamos corchetes y flechas. Corchetes no debería haber ninguno que sea de acceder a la pila
+ * Flechas no debería haber accediendo a ninguna accediendo a la posición a la lista.
+ */
 
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList *L) {
     printf("********************\n");
