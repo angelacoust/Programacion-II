@@ -190,51 +190,47 @@ void InvalidateBids(tList *L) {
      */
 
     if (isEmptyList(*L)) //Si la lista de consolas está vacía, no hay nada que borrar
-        printf("+ Error: InvalidateBits not possible.\n");
+        printf("+ Error: InvalidateBits not possible\n");
 
     else {
-        tPosL p;
-        tItemL console;
-        int totalBids = 0, totalConsoles = 0;
+        tPosL p; //Definimos variable auxiliar p para recorrer la lista
+        tItemL console; //Declaramos variable auxuliar consola que imprimirá los datos
+        int totalBids = 0, totalConsoles = 0; //Variables que usaremos para calcular la media
         float average;
 
-        // Primera pasada: calcular la media de pujas
-        for (p = first(*L); p != LNULL; p = next(p, *L)) {
+        for (p = first(*L); p != LNULL; p = next(p, *L)) { // Recorro la lista para calcular el número total de pujas
             console = getItem(p, *L);
             totalBids += console.bidCounter;
             totalConsoles++;
         }
 
-        if (totalConsoles == 0) { //Evitamos división entre cero
+        if (totalConsoles == 0) //Evitamos división entre cero
             average = 0;
-        } else {
-            average = (float) totalBids / (float)totalConsoles;
-        }
+        else
+            average = (float)totalBids / (float)totalConsoles; //Calculamos media de pujas
 
-        int invalidated = 0; // Para saber si al menos hemos invalidado alguna
+        int pujasInvalidas = 0; // Para saber si al menos hemos invalidado alguna
 
-        // Segunda pasada: invalidar pujas donde corresponda
-        for (p = first(*L); p != LNULL; p = next(p, *L)) {
-            console = getItem(p, *L);
+        for (p = first(*L); p != LNULL; p = next(p,*L)) { //Volvemos a reocrrer la lista para invalidar las pujas
+            console = getItem(p,*L);
 
-            if ((float)console.bidCounter > 2 * average) {
+            if ((float)console.bidCounter > 2*average) {
                 printf("* InvalidateBids: console %s seller %s brand %s price %.2f bids %d average bids %.2f\n",
                        console.consoleId, console.seller, enumToString(console.consoleBrand),
                        console.consolePrice, console.bidCounter, average);
 
                 //Vaciar la pila de pujas
-                while (!isEmptyStack(console.bidStack)) {
+                while(!isEmptyStack(console.bidStack)){
                     pop(&console.bidStack);
                 }
                 console.bidCounter = 0;
                 updateItem(console, p, L);
 
-                invalidated++;
+                pujasInvalidas ++;
             }
         }
-        if (invalidated == 0) {
-            printf("+ Error: InvalidateBids not possible.\n");
-        }
+        if (pujasInvalidas == 0)
+            printf("+ Error: InvalidateBids not possible\n");
     }
 }
 
@@ -252,11 +248,9 @@ void Remove(tList *L){
         printf("+ Error: Remove not possible\n");
 
     else {
-
         tPosL p = first(*L); //Declaramos variable que recorrerá las posiciones de la lista
         tItemL console; //Variable que tomará los datos de las consolas
         int count = 0; //Contador que servirá para saber cuantos elementos tienen pujas
-
 
         while(p != LNULL){
             console = getItem(p, *L);  //Tomamos los datos de cada consola de la lista
@@ -430,7 +424,7 @@ void readTasks(char *filename, tList *L) {
 
 int main(int nargs, char **args) {
 
-    char *file_name = "invalidateProMax.txt";
+    char *file_name = "invalidateError.txt";
 
     tList L;
     createEmptyList(&L); //Creación de la lista
