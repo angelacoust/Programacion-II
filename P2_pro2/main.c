@@ -58,7 +58,7 @@ void New (tList *L, tConsoleId consoleId, tUserId seller, tConsoleBrand consoleB
                    consoleId,seller, enumToString(consoleBrand),consolePrice);
 
         else
-            printf("+ Error: New not possible\n"); //Si no se ha podido realizar la inserción
+            printf("+ Error: New not possible\n"); //Si no se ha podido realizar la inserción mensaje de error
     }
 }
 
@@ -72,31 +72,27 @@ void Delete (tList *L, tConsoleId consoleId){
      * PostCD: El contenido de la lista puede haber cambiado
      */
 
-    if(isEmptyList(*L))
-        printf("+ Error: Delete not possible\n"); //Si la lista está vacía no hay nada que borrar
+    tPosL p; //Creamos una variable de tipo tPosL para buscar la posición de la consola en la lista
+    p = findItem(consoleId, *L);
+
+    if (p == LNULL)
+        printf("+ Error: Delete not possible\n"); //Si no se encontró el elemento (no está en la lista) o la lista está vacía, da error
 
     else {
-        tPosL p; //Creamos una variable de tipo tPosL para buscar la posición de la consola en la lista
-        p = findItem(consoleId, *L);
+        tItemL console; //Creamos variable auxiliar para guardar los datos de la consola dada
+        console = getItem(p, *L);
+        console.bidCounter = 0;
 
-        if (p == LNULL)
-            printf("+ Error: Delete not possible\n"); // Si no se encontró el elemento (no está en la lista), da error
-
-        else {
-            tItemL console;
-            console = getItem(p, *L);
-            console.bidCounter = 0;
-
-            if(!isEmptyStack(console.bidStack)) { //Si no está vacía la lista de pujas, vamos a vaciarla :)
-                while (!isEmptyStack(console.bidStack)) {
-                    pop(&console.bidStack);
-                    console.bidCounter++;
-                }
+        if(!isEmptyStack(console.bidStack)) { //Si no está vacía la lista de pujas, vamos a vaciarla :)
+            while (!isEmptyStack(console.bidStack)) {
+                pop(&console.bidStack);
+                console.bidCounter++;
             }
-            deleteAtPosition(p, L);
-            printf("* Delete: console %s seller %s brand %s price %.2f bids %d\n", console.consoleId,
-                   console.seller, enumToString(console.consoleBrand), console.consolePrice, console.bidCounter);
         }
+        deleteAtPosition(p, L); //Borramos la consola de la lista
+        //Imprimimos los datos de la consola borrada
+        printf("* Delete: console %s seller %s brand %s price %.2f bids %d\n", console.consoleId,
+               console.seller, enumToString(console.consoleBrand), console.consolePrice, console.bidCounter);
     }
 }
 
@@ -115,7 +111,7 @@ void Bid (tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consoleP
     tItemL console; //Creamos variable auxiliar
     tPosL i = findItem(consoleId, *L); //Buscamos la posición de la consola en la lista
 
-    if (i == LNULL)  //Si la consola no existiese en la lista da error
+    if (i == LNULL)  //Si la consola no existiese en la lista dará error
         printf("+ Error: Bid not possible\n");
 
     else {
@@ -123,21 +119,19 @@ void Bid (tList *L, tConsoleId consoleId, tUserId bidder, tConsolePrice consoleP
         //Si pujador = vendedor o si el precio la puja actual es inferior al de la puja anterior o al de la consola
         if ((strcmp(console.seller, bidder) == 0) ||
            (consolePrice <= console.consolePrice) || (consolePrice <= peek(console.bidStack).consolePrice))
-        {
             printf("+ Error: Bid not possible\n");
-        }
+
         else {
             tItemS bid;
             strcpy(bid.bidder, bidder);
             bid.consolePrice = consolePrice;
 
-            //Si no se puede insertar en la pila de pujas
-            if (!push(bid, &console.bidStack))
+            if (!push(bid, &console.bidStack)) //Si no se puede insertar en la pila de pujas
                 printf("+ Error: Bid not possible\n");
 
             else {
                 console.bidCounter++; //Aumentamos el número de veces que se ha pujado
-                updateItem(console, i, L); //Actualizamos  datos de la consola e imprimimos mensaje de exito
+                updateItem(console, i, L); //Actualizamos  datos de la consola e imprimimos mensaje de éxito
                 printf("* Bid: console %s bidder %s brand %s price %.2f bids %d\n",console.consoleId,bid.bidder,
                        enumToString(console.consoleBrand), consolePrice, console.bidCounter);
             }
@@ -156,25 +150,32 @@ void Award(tList *L, tConsoleId consoleId){
      */
 
     tPosL p = findItem(consoleId, *L); //Posición de la consola ganadora en la lista
-    tItemL console = getItem(p, *L); //variable auxiliar para guardar los datos de la consola ganadora
 
-    //Si no existiera la consola en la lista o si su pila de pujas estuviera vacía imprimimos mensaje de error
-    if ((p == LNULL) || isEmptyStack(console.bidStack))
-        printf("+ Error: Award not possible");
+    //Si no existiera la consola en la lista
+    if (p== LNULL)
+        printf("+ Error: Award not possible\n");
 
     else {
+        tItemL console = getItem(p, *L); //variable auxiliar para guardar los datos de la consola ganadora
         tItemS bid; //creamos variable auxiliar para acceder a la pila de pujas de la consola ganadora
         bid = peek(console.bidStack);
 
-        //Imprimimos los datos de la consola ganadora
-        printf("* Award: console %s bidder %s brand %s price %.2f \n",
-               consoleId, bid.bidder, enumToString(console.consoleBrand), bid.consolePrice);
+        //si su pila de pujas estuviera vacía imprimimos mensaje de error
+        if(isEmptyStack(console.bidStack))
+            printf("+ Error: Award not possible\n");
 
-        //Vaciamos la pila de pujas de la consola a borrar
-        while (!isEmptyStack(console.bidStack)){
-            pop(&console.bidStack);
+        else{
+            //Imprimimos los datos de la consola ganadora
+             printf("* Award: console %s bidder %s brand %s price %.2f\n",
+                   consoleId, bid.bidder, enumToString(console.consoleBrand), bid.consolePrice);
+
+            while (!isEmptyStack(console.bidStack)){ //Vaciamos la pila de pujas de la consola a borrar
+                pop(&console.bidStack);
+            }
+            console.bidCounter = 0;
+            updateItem(console, p, L);
+            deleteAtPosition(p, L); //Finalmente borramos la consola ganadora
         }
-        deleteAtPosition(p, L); //Finalmente borramos la consola ganadora
     }
 }
 
@@ -190,46 +191,45 @@ void InvalidateBids(tList *L) {
      */
 
     if (isEmptyList(*L)) //Si la lista de consolas está vacía, no hay nada que borrar
-        printf("+ Error: InvalidateBits not possible\n");
+        printf("+ Error: InvalidateBids not possible\n");
 
     else {
         tPosL p; //Definimos variable auxiliar p para recorrer la lista
-        tItemL console; //Declaramos variable auxuliar consola que imprimirá los datos
-        int totalBids = 0, totalConsoles = 0; //Variables que usaremos para calcular la media
+        tItemL console; // variable auxuliar que imprimirá los datos
+        int totalBids = 0, totalConsoles = 0; //Variables para calcular la media
         float average;
 
         for (p = first(*L); p != LNULL; p = next(p, *L)) { // Recorro la lista para calcular el número total de pujas
             console = getItem(p, *L);
-            totalBids += console.bidCounter;
-            totalConsoles++;
+            totalBids += console.bidCounter; //Sumamos pujas
+            totalConsoles++; // Calculamos el total de las consolas
         }
 
         if (totalConsoles == 0) //Evitamos división entre cero
             average = 0;
         else
-            average = (float)totalBids / (float)totalConsoles; //Calculamos media de pujas
+            average = (float)totalBids/(float)totalConsoles; //Calculamos media de pujas
 
         int pujasInvalidas = 0; // Para saber si al menos hemos invalidado alguna
 
-        for (p = first(*L); p != LNULL; p = next(p,*L)) { //Volvemos a reocrrer la lista para invalidar las pujas
+        for (p = first(*L); p != LNULL; p = next(p,*L)) { //Recorremos la lista para invalidar las pujas
             console = getItem(p,*L);
 
-            if ((float)console.bidCounter > 2*average) {
+            if ((float)console.bidCounter > 2 * average) { //Si la consola tiene un número excesivo de pujas la borramos
                 printf("* InvalidateBids: console %s seller %s brand %s price %.2f bids %d average bids %.2f\n",
                        console.consoleId, console.seller, enumToString(console.consoleBrand),
-                       console.consolePrice, console.bidCounter, average);
+                       console.consolePrice, console.bidCounter, average); //Imprimimos datos de la consola invalidada
 
-                //Vaciar la pila de pujas
-                while(!isEmptyStack(console.bidStack)){
+                while(!isEmptyStack(console.bidStack)){ //Vaciamos su pila de pujas
                     pop(&console.bidStack);
                 }
-                console.bidCounter = 0;
-                updateItem(console, p, L);
+                console.bidCounter = 0; //Inicializamos el número de pujas a 0 otra vez
+                updateItem(console, p, L); //Actualizamos la lista con la consola ahora sin pujas
 
-                pujasInvalidas ++;
+                pujasInvalidas++; //Condición de que si que hemos invalidado consolas, si ninguna fue invalidada, siguiente if
             }
         }
-        if (pujasInvalidas == 0)
+        if (pujasInvalidas == 0) //Si ninguna consola ha sido invalidada, imprimimos mensaje de error
             printf("+ Error: InvalidateBids not possible\n");
     }
 }
@@ -242,7 +242,6 @@ void Remove(tList *L){
      * PreCD: La lista de consolas y la pilas de pujas deben estar inicializadas
      * PostCD: El contenido de la lista puede haber cambiado
      */
-
 
     if (isEmptyList(*L)) //Si la lista está vacía no hay nada que borrar
         printf("+ Error: Remove not possible\n");
@@ -258,22 +257,21 @@ void Remove(tList *L){
             if(isEmptyStack(console.bidStack)){ //Si la pila de pujas de la consola está vacía
                 count++; // Número de consolas con pujas incrementa
 
+                //Imprimimos los datos de la consola a borrar
                 printf("Removing console %s seller %s brand %s price %.2f bids %d\n", console.consoleId,console.seller,
                        enumToString(console.consoleBrand), console.consolePrice, console.bidCounter);
 
-                deleteAtPosition(p, L);
-                p = first(*L);
+                deleteAtPosition(p, L); //Borramos la consola de la lista
+                p = first(*L); //Actualizamos el bucle
             }
             else {
-                p = next(p,*L);
+                p = next(p,*L); //Si no se borra ninguna consola, pasamos a la siguiente
             }
         }
-        if(count == 0){ //Si no había ninguna consola con pujas tampoco hay nada que borrar
+        if(count == 0) //Si no había ninguna consola con pujas tampoco hay nada que borrar
             printf("+ Error: Remove not possible\n");
-        }
     }
 }
-
 
 
 void Stats(tList L) {
@@ -286,31 +284,33 @@ void Stats(tList L) {
      * PreCD: La lista está inicializada
      */
 
-    if (isEmptyList(L))
+    if (isEmptyList(L)) //Si la lista está vacía no hay datos que mostrar
         printf("+ Error: Stats not possible\n");
 
     else {
         tPosL posL; //variiable donde guardaremos la posición de la consola
         tItemL console; //Consola auxiliar que servirá para poder imprimir la información de todas las de la lista
-        tItemL max; //variable para guardar la consola con la puja más epica
-        tItemS bid, mayorBid;
+        tItemL max; //variable para guardar la consola con la mejor puja
+        tItemS bid, mayorBid; //variables para acceder a las pilas de las consolas
 
-        int cNintendo = 0, cSega = 0, bids = 0;
-        float cNintendoPrice = 0, cSegaPrice = 0, averageNintendo, averageSega, aux = 0 ;
+        int cNintendo = 0, cSega = 0, bids = 0; //Inicializamos valores de las cuentas
+        float cNintendoPrice = 0, cSegaPrice = 0, averageNintendo, averageSega, aux = 0 ; //variables para calcular las medias
 
 
         for (posL =first(L); posL != LNULL; posL = next(posL, L)) {
             console = getItem(posL, L); //Usamos el getItem para obtener la info de cada consola que hay en la lista
+
             //Imprimimos los datos de cada una de las consolas
             printf("Console %s seller %s brand %s price %.2f", console.consoleId, console.seller,
                    enumToString(console.consoleBrand), console.consolePrice);
 
-            if(isEmptyStack(console.bidStack)) { // if(console.bidCounter == 0)
+            if(isEmptyStack(console.bidStack)) // if(console.bidCounter == 0)
                 printf(". No bids\n");
-            } else {
+            else {
                 bid = peek(console.bidStack); //Accedemos a la última puja de la consola
                 printf(" bids %d top bidder %s\n", console.bidCounter, bid.bidder); //Imprimimos sus datos
-                bids++; //
+                bids++; //Condición de que si que existen consolas con pujas
+
                 if (((bid.consolePrice) * 100 / console.consolePrice - 100) > aux) {
                     aux = ((bid.consolePrice * 100 / console.consolePrice) - 100);
                     max = console;
@@ -329,21 +329,21 @@ void Stats(tList L) {
             if (cNintendoPrice == 0) //Para evitar una división entre 0, que daria indeterminado
                 averageNintendo = 0;
             else
-                //Calculamos la media dividiendo el dinero total entre el numero de consolas (Nintendo)
-                averageNintendo = cNintendoPrice / (float) cNintendo;
+                //Calculamos la media dividiendo el dinero total entre el numero de consolas nintendo
+                averageNintendo = cNintendoPrice/(float) cNintendo;
 
             if (cSega == 0) //Evitar división entre cero
                 averageSega = 0;
             else
-                //Calculamos la media dividiendo el dinero total entre el numero de consolas (Sega)
-                averageSega = cSegaPrice / (float) cSega;
+                //Calculamos la media dividiendo el dinero total entre el numero de consolas sega
+                averageSega = cSegaPrice/(float) cSega;
         }
 
         printf("\nBrand     Consoles    Price  Average\n"
                "Nintendo  %8d %8.2f %8.2f\n"
                "Sega      %8d %8.2f %8.2f\n", cNintendo,cNintendoPrice,averageNintendo, cSega,cSegaPrice,averageSega);
 
-        if (bids > 0){
+        if (bids > 0){ //Si hay al menos una imprimimos la mejor
             printf("Top bid: console %s seller %s brand %s price %.2f bidder %s top price %.2f increase %.2f%%\n",
                    max.consoleId, max.seller, enumToString(max.consoleBrand), max.consolePrice,
                    mayorBid.bidder, mayorBid.consolePrice, aux);
@@ -424,16 +424,16 @@ void readTasks(char *filename, tList *L) {
 
 int main(int nargs, char **args) {
 
-    char *file_name = "invalidateError.txt";
+    char *file_name = "new.txt";
 
     tList L;
     createEmptyList(&L); //Creación de la lista
     if (nargs > 1) {
         file_name = args[1];
     } else {
-#ifdef INPUT_FILE
+        #ifdef INPUT_FILE
         file_name = INPUT_FILE;
-#endif
+        #endif
     }
 
     readTasks(file_name, &L);
