@@ -2,15 +2,14 @@
  * TITLE: PROGRAMMING II LABS
  * SUBTITLE: Practical 2
  * AUTHOR 1: Ángela Costa Trigo         LOGIN 1: angela.costa
- * AUTHOR 2: Antón González Domínguez   LOGIN 2: anton.gonzalezd
  * GROUP: 3.2
  * DATE: 28 / 03 / 25
  */
 
 #include "bid_stack.h"
 
-void createEmptyStack (tStack *stack){
-    stack->top = SNULL;
+void createEmptyStack (tStack *S){
+    S->top = SNULL;
 }
 
 bool push (tItemS d, tStack *S){
@@ -31,6 +30,6 @@ tItemS peek (tStack S){
     return (S.data[S.top]); //Accedemos al campo data del primer elemento de la lista
 }
 
-bool isEmptyStack (tStack stack){
-    return (stack.top == SNULL);
+bool isEmptyStack (tStack S){
+    return (S.top == SNULL);
 }
