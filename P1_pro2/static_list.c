@@ -2,7 +2,6 @@
  * TITLE: PROGRAMMING II LABS
  * SUBTITLE: Practical 1
  * AUTHOR 1: ANGELA COSTA TRIGO         LOGIN 1: angela.costa
- * AUTHOR 2: ANTON GONZALEZ DOMINGUEZ   LOGIN 2: anton.gonzalezd
  * GROUP: 3.2
  * DATE: 27 / 02 / 25
  */
